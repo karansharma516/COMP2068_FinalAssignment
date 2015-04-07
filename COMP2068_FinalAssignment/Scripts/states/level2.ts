@@ -6,10 +6,13 @@
 /// <reference path="../objects/label.ts" />
 /// <reference path="../objects/barry.ts" />
 /// <reference path="../objects/scoreboard.ts" />
+/// <reference path="../objects/background2.ts" />
+/// <reference path="../objects/bee.ts" />
 /// <reference path="../constants.ts" />
-/// <reference path="level2.ts" />
 
+/// <reference path="../game.ts" />
 /// <reference path="gameover.ts" />
+/// <reference path="../objects/electric.ts" />
 
 
 
@@ -22,13 +25,14 @@ Last Modified : March 19, 2015
 
 module states {
     // PLAY STATE
-    export class GamePlay {
+    export class Level2 {
         // PUBLIC VARIABLES ++++++++++++++++++++++++++++++++++++++++++++++
         public game: createjs.Container;
         public barry: objects.Barry;
         public coins: objects.Coins;
-        public missles: objects.Missles[] = [];
-        public background: objects.Background;
+        public electric: objects.Electric;
+        public bee: objects.Bee[] = [];
+        public background2: objects.Background_2;
         public scoreboard: objects.ScoreBoard;
      
 
@@ -38,8 +42,8 @@ module states {
             this.game = new createjs.Container();
 
             // Add background to game
-            this.background = new objects.Background();
-            this.game.addChild(this.background);
+            this.background2 = new objects.Background_2();
+            this.game.addChild(this.background2);
 
 
             // Add ring to game
@@ -51,12 +55,13 @@ module states {
             this.barry = new objects.Barry();
             this.game.addChild(this.barry);
 
-        
+            this.electric = new objects.Electric();
+            this.game.addChild(this.electric);
 
             // Add clouds to game
-            for (index = constants.CLOUD_NUM; index > 0; index--) {
-                this.missles[index] = new objects.Missles();
-                this.game.addChild(this.missles[index]);
+            for (index = constants.BEE_NUM; index > 0; index--) {
+                this.bee[index] = new objects.Bee();
+                this.game.addChild(this.bee[index]);
             }
 
             this.scoreboard = new objects.ScoreBoard(this.game);
@@ -92,11 +97,15 @@ module states {
                             this.scoreboard.score += 100;
                             this.coins._reset();
                             break;
-                        case "missles":
+                        case "electric":
                             this.scoreboard.lives--;
-                            this.missles[index]._reset();
+                            this.electric._reset();
                             break;
-                        
+                        case "bee":
+                            this.scoreboard.lives--;
+                            this.bee[index]._reset();
+                            break;
+
                     }
                 }
             } else {
@@ -106,20 +115,20 @@ module states {
 
         // UPDATE METHOD
         public update() {
-            this.background.update();
+            this.background2.update();
             this.barry.update();
             this.coins.update();
-           
+            this.electric.update();
             
-            // check collisions
             if (this.scoreboard.lives > 0) {
-                for (index = constants.CLOUD_NUM; index > 0; index--) {
-                    this.missles[index].update();
-                    this.checkCollision(this.missles[index]);
+                for (index = constants.BEE_NUM; index > 0; index--) {
+                    this.bee[index].update();
+                    this.checkCollision(this.bee[index]);
                 }
 
+                this.checkCollision(this.electric);
                 this.checkCollision(this.coins);
-              
+
             }
 
             this.scoreboard.update();
@@ -143,9 +152,9 @@ module states {
                 stateChanged = true;
             }
             // check if player won
-            if (this.scoreboard.score == 200) {
+            if (this.scoreboard.score >= 5000) {
                 createjs.Sound.play("lifeUpSound");
-               
+                createjs.Sound.stop();
                 this.game.removeAllChildren();
                 stage.removeAllChildren();
 
@@ -153,10 +162,10 @@ module states {
                     highScore = finalScore;
                 }
 
-               // finalText = "YOU WON";
-               // finalScore = this.scoreboard.score;
+                finalText = "YOU WON";
+                finalScore = this.scoreboard.score;
 
-                currentState = constants.LEVEL_2;
+                currentState = constants.GAME_OVER_STATE;
                 stateChanged = true;
 
             }

@@ -7,6 +7,7 @@
 /// <reference path="../objects/barry.ts" />
 /// <reference path="../objects/scoreboard.ts" />
 /// <reference path="../constants.ts" />
+/// <reference path="level2.ts" />
 /// <reference path="gameover.ts" />
 /**
 File: gamePlay.ts
@@ -102,17 +103,16 @@ var states;
                 stateChanged = true;
             }
             // check if player won
-            if (this.scoreboard.score >= 5000) {
+            if (this.scoreboard.score == 200) {
                 createjs.Sound.play("lifeUpSound");
-                createjs.Sound.stop();
                 this.game.removeAllChildren();
                 stage.removeAllChildren();
                 if (finalScore > highScore) {
                     highScore = finalScore;
                 }
-                finalText = "YOU WON";
-                finalScore = this.scoreboard.score;
-                currentState = constants.GAME_OVER_STATE;
+                // finalText = "YOU WON";
+                // finalScore = this.scoreboard.score;
+                currentState = constants.LEVEL_2;
                 stateChanged = true;
             }
         }; // update method end

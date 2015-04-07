@@ -27,12 +27,12 @@ var states;
             this.background = new objects.Background();
             this.game.addChild(this.background);
             //Game Over Label
-            this.mailPilotLabel = new objects.Label(320, 40, "NEMO FIGHTER");
+            this.mailPilotLabel = new objects.Label(320, 40, "JETPACK JOYRIDE");
             this.mailPilotLabel.font = "60px Consolas";
             this.mailPilotLabel.regX = this.mailPilotLabel.getMeasuredWidth() * 0.5;
             this.mailPilotLabel.regY = this.mailPilotLabel.getMeasuredLineHeight() * 0.5;
             this.game.addChild(this.mailPilotLabel);
-            this.label = new objects.Label(320, 40, "PROTECT NEMO FROM ENEMIES");
+            this.label = new objects.Label(320, 40, "TEST NEW INVENTIONS");
             this.label.font = "40px Consolas";
             this.label.x = 320;
             this.label.y = 150;
