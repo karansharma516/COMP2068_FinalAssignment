@@ -19,11 +19,8 @@ var objects;
          * This constructor creates creates nemo(player) at its position
          */
         function Barry() {
-            _super.call(this, assetLoader.getResult("barry"));
-            this.width = this.getBounds().width;
-            this.height = this.getBounds().height;
-            this.regX = this.width * 0.5;
-            this.regY = this.height * 0.5;
+            _super.call(this, "barry");
+            this.name = "barry";
             this.x = 80;
         }
         // PUBLIC METHODS ++++++++++++++++++++++++++++++++++++++++++
@@ -34,7 +31,7 @@ var objects;
             this.y = stage.mouseY;
         };
         return Barry;
-    })(createjs.Bitmap);
+    })(objects.GameObject);
     objects.Barry = Barry;
 })(objects || (objects = {}));
 //# sourceMappingURL=barry.js.map

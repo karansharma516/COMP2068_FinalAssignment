@@ -8,8 +8,9 @@
 /// <reference path="../objects/scoreboard.ts" />
 /// <reference path="../objects/background2.ts" />
 /// <reference path="../objects/bee.ts" />
+/// <reference path="../objects/enemy.ts" />
 /// <reference path="../constants.ts" />
-/// <reference path="../objects/bullet.ts" />
+/// <reference path="../objects/background3.ts" />
 /// <reference path="../game.ts" />
 /// <reference path="gameover.ts" />
 /// <reference path="../objects/electric.ts" />
@@ -22,15 +23,15 @@ Last Modified : March 19, 2015
 var states;
 (function (states) {
     // PLAY STATE
-    var Level2 = (function () {
+    var Level3 = (function () {
         // CONSTRUCTOR ++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        function Level2() {
+        function Level3() {
             this.bee = [];
             // Instantiate Game Container
             this.game = new createjs.Container();
             // Add background to game
-            this.background2 = new objects.Background_2();
-            this.game.addChild(this.background2);
+            this.background3 = new objects.Background_3();
+            this.game.addChild(this.background3);
             // Add ring to game
             this.coins = new objects.Coins();
             this.game.addChild(this.coins);
@@ -39,26 +40,22 @@ var states;
             this.game.addChild(this.barry);
             this.electric = new objects.Electric();
             this.game.addChild(this.electric);
+            this.enemy = new objects.Enemy();
+            this.game.addChild(this.enemy);
             for (index = constants.BEE_NUM; index > 0; index--) {
                 this.bee[index] = new objects.Bee();
                 this.game.addChild(this.bee[index]);
             }
             scoreboard = new objects.ScoreBoard(this.game);
-            stage.addEventListener("click", this.bulletClick);
             stage.addChild(this.game);
         } // constructor end
-        Level2.prototype.bulletClick = function () {
-            bullet = new objects.Bullet(80, stage.mouseY);
-            bullets.unshift(bullet);
-            stage.addChild(bullets[0]);
-        };
         // PUBLIC METHODS ++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Calculate the distance between two points
-        Level2.prototype.distance = function (p1, p2) {
+        Level3.prototype.distance = function (p1, p2) {
             return Math.floor(Math.sqrt(Math.pow((p2.x - p1.x), 2) + Math.pow((p2.y - p1.y), 2)));
         }; // distance end
         // CHeck Collision Method
-        Level2.prototype.checkCollision = function (collider) {
+        Level3.prototype.checkCollision = function (collider) {
             var p1 = new createjs.Point();
             var p2 = new createjs.Point();
             p1.x = this.barry.x;
@@ -83,8 +80,9 @@ var states;
                             lives--;
                             this.bee[index]._reset();
                             break;
-                        case "bullet":
-                            bullet.collide();
+                        case "enemy":
+                            lives--;
+                            this.enemy._reset();
                             break;
                     }
                 }
@@ -94,17 +92,12 @@ var states;
             }
         }; // checkCollision end
         // UPDATE METHOD
-        Level2.prototype.update = function () {
-            this.background2.update();
+        Level3.prototype.update = function () {
+            this.background3.update();
             this.barry.update();
             this.coins.update();
             this.electric.update();
-            if (bullet != undefined) {
-                for (var i = 0; i < bullets.length - 1; i++) {
-                    bullets[i].update();
-                    this.checkCollision(bullets[i]);
-                }
-            }
+            this.enemy.update();
             if (lives > 0) {
                 for (index = constants.BEE_NUM; index > 0; index--) {
                     this.bee[index].update();
@@ -112,6 +105,7 @@ var states;
                 }
                 this.checkCollision(this.electric);
                 this.checkCollision(this.coins);
+                this.checkCollision(this.enemy);
             }
             scoreboard.update();
             // check if player lost 
@@ -125,25 +119,26 @@ var states;
                 }
                 finalText = "YOU LOST";
                 finalScore = scores;
-                this.game.removeAllEventListeners();
                 currentState = constants.GAME_OVER_STATE;
                 stateChanged = true;
             }
             // check if player won
-            if (scores == 500) {
+            if (scores >= 5000) {
                 createjs.Sound.play("lifeUpSound");
+                createjs.Sound.stop();
                 this.game.removeAllChildren();
-                this.game.removeAllEventListeners();
                 stage.removeAllChildren();
                 if (finalScore > highScore) {
                     highScore = finalScore;
                 }
-                currentState = constants.LEVEL_3;
+                finalText = "YOU WON";
+                finalScore = scores;
+                currentState = constants.GAME_OVER_STATE;
                 stateChanged = true;
             }
         }; // update method end
-        return Level2;
+        return Level3;
     })();
-    states.Level2 = Level2;
+    states.Level3 = Level3;
 })(states || (states = {}));
-//# sourceMappingURL=level2.js.map
+//# sourceMappingURL=level3.js.map

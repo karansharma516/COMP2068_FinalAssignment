@@ -9,6 +9,7 @@
 /// <reference path="../objects/background2.ts" />
 /// <reference path="../objects/bee.ts" />
 /// <reference path="../constants.ts" />
+/// <reference path="../objects/bullet.ts" />
 
 /// <reference path="../game.ts" />
 /// <reference path="gameover.ts" />
@@ -18,7 +19,7 @@
 
 /**
 File: gamePlay.ts
-Author: Karan Sharma
+Author: Karan Sharma and Chandan Dadral
 Description: This class displays the plays the game when the user selcts the player 2. 
 Last Modified : March 19, 2015
 */
@@ -33,8 +34,8 @@ module states {
         public electric: objects.Electric;
         public bee: objects.Bee[] = [];
         public background2: objects.Background_2;
-        public scoreboard: objects.ScoreBoard;
-     
+       
+        
 
         // CONSTRUCTOR ++++++++++++++++++++++++++++++++++++++++++++++++++++++
         constructor() {
@@ -64,12 +65,22 @@ module states {
                 this.game.addChild(this.bee[index]);
             }
 
-            this.scoreboard = new objects.ScoreBoard(this.game);
+            scoreboard = new objects.ScoreBoard(this.game);
+
+            stage.addEventListener("click", this.bulletClick);
 
             stage.addChild(this.game);
 
         } // constructor end
 
+        public bulletClick() {
+            bullet = new objects.Bullet(80, stage.mouseY);
+            bullets.unshift(bullet);
+            stage.addChild(bullets[0]);
+
+        }
+
+       
         // PUBLIC METHODS ++++++++++++++++++++++++++++++++++++++++++++++++++++
 
         // Calculate the distance between two points
@@ -94,18 +105,20 @@ module states {
                     collider.isColliding = true;
                     switch (collider.name) {
                         case "coins":
-                            this.scoreboard.score += 100;
+                            scores += 100;
                             this.coins._reset();
                             break;
                         case "electric":
-                            this.scoreboard.lives--;
+                            lives--;
                             this.electric._reset();
                             break;
                         case "bee":
-                            this.scoreboard.lives--;
+                            lives--;
                             this.bee[index]._reset();
                             break;
-
+                        case "bullet":
+                            bullet.collide();
+                            break;
                     }
                 }
             } else {
@@ -119,8 +132,18 @@ module states {
             this.barry.update();
             this.coins.update();
             this.electric.update();
-            
-            if (this.scoreboard.lives > 0) {
+
+            if (bullet != undefined) {
+                for (var i = 0; i < bullets.length - 1; i++) {
+                    bullets[i].update();
+                    this.checkCollision(bullets[i]);
+                }
+
+            }
+
+           
+
+            if (lives > 0) {
                 for (index = constants.BEE_NUM; index > 0; index--) {
                     this.bee[index].update();
                     this.checkCollision(this.bee[index]);
@@ -131,10 +154,10 @@ module states {
 
             }
 
-            this.scoreboard.update();
+            scoreboard.update();
             // check if player lost 
 
-            if (this.scoreboard.lives < 1) {
+            if (lives < 1) {
                 createjs.Sound.play("coinSound");
                 createjs.Sound.stop();
 
@@ -146,26 +169,24 @@ module states {
                 }
 
                 finalText = "YOU LOST";
-                finalScore = this.scoreboard.score;
-
+                finalScore = scores;
+                this.game.removeAllEventListeners();
                 currentState = constants.GAME_OVER_STATE;
                 stateChanged = true;
             }
             // check if player won
-            if (this.scoreboard.score >= 5000) {
+            if (scores == 500) {
                 createjs.Sound.play("lifeUpSound");
-                createjs.Sound.stop();
+
                 this.game.removeAllChildren();
+                this.game.removeAllEventListeners();
                 stage.removeAllChildren();
 
                 if (finalScore > highScore) {
                     highScore = finalScore;
                 }
-
-                finalText = "YOU WON";
-                finalScore = this.scoreboard.score;
-
-                currentState = constants.GAME_OVER_STATE;
+                
+                currentState = constants.LEVEL_3;
                 stateChanged = true;
 
             }

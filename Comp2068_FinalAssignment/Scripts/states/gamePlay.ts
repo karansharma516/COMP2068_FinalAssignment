@@ -10,6 +10,7 @@
 /// <reference path="level2.ts" />
 
 /// <reference path="gameover.ts" />
+/// <reference path="../objects/barry.ts" />
 
 
 
@@ -29,8 +30,7 @@ module states {
         public coins: objects.Coins;
         public missles: objects.Missles[] = [];
         public background: objects.Background;
-        public scoreboard: objects.ScoreBoard;
-     
+       
 
         // CONSTRUCTOR ++++++++++++++++++++++++++++++++++++++++++++++++++++++
         constructor() {
@@ -59,7 +59,7 @@ module states {
                 this.game.addChild(this.missles[index]);
             }
 
-            this.scoreboard = new objects.ScoreBoard(this.game);
+            scoreboard = new objects.ScoreBoard(this.game);
 
             stage.addChild(this.game);
 
@@ -89,11 +89,11 @@ module states {
                     collider.isColliding = true;
                     switch (collider.name) {
                         case "coins":
-                            this.scoreboard.score += 100;
+                            scores += 100;
                             this.coins._reset();
                             break;
                         case "missles":
-                            this.scoreboard.lives--;
+                            lives--;
                             this.missles[index]._reset();
                             break;
                         
@@ -112,7 +112,7 @@ module states {
            
             
             // check collisions
-            if (this.scoreboard.lives > 0) {
+            if (lives > 0) {
                 for (index = constants.CLOUD_NUM; index > 0; index--) {
                     this.missles[index].update();
                     this.checkCollision(this.missles[index]);
@@ -122,10 +122,10 @@ module states {
               
             }
 
-            this.scoreboard.update();
+            scoreboard.update();
             // check if player lost 
 
-            if (this.scoreboard.lives < 1) {
+            if (lives < 1) {
                 createjs.Sound.play("coinSound");
                 createjs.Sound.stop();
 
@@ -137,13 +137,13 @@ module states {
                 }
 
                 finalText = "YOU LOST";
-                finalScore = this.scoreboard.score;
+                finalScore = scores;
 
                 currentState = constants.GAME_OVER_STATE;
                 stateChanged = true;
             }
             // check if player won
-            if (this.scoreboard.score == 200) {
+            if (scores == 200) {
                 createjs.Sound.play("lifeUpSound");
                
                 this.game.removeAllChildren();
@@ -152,9 +152,6 @@ module states {
                 if (finalScore > highScore) {
                     highScore = finalScore;
                 }
-
-               // finalText = "YOU WON";
-               // finalScore = this.scoreboard.score;
 
                 currentState = constants.LEVEL_2;
                 stateChanged = true;

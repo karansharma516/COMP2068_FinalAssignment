@@ -16,7 +16,7 @@ var objects;
         __extends(GameObject, _super);
         // CONSTRUCTOR ++++++++++++++++++++++++++++++++++++++++++++
         function GameObject(assetString) {
-            _super.call(this, assetLoader.getResult(assetString));
+            _super.call(this, textureAtlas, assetString);
             this.width = this.getBounds().width;
             this.height = this.getBounds().height;
             this.regX = this.width * 0.5;
@@ -24,7 +24,7 @@ var objects;
             this.isColliding = false;
         }
         return GameObject;
-    })(createjs.Bitmap);
+    })(createjs.Sprite);
     objects.GameObject = GameObject;
 })(objects || (objects = {}));
 //# sourceMappingURL=gameobject.js.map

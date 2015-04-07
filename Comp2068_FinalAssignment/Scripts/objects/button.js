@@ -10,7 +10,7 @@ var objects;
         __extends(Button, _super);
         // CONSTRUCTOR +++++++++++++++++++++++++++++++++++++++++++++++++
         function Button(stringPath, x, y) {
-            _super.call(this, assetLoader.getResult(stringPath));
+            _super.call(this, stringPath);
             this.regX = this.getBounds().width * 0.5;
             this.regY = this.getBounds().height * 0.5;
             this.x = x;
@@ -26,7 +26,7 @@ var objects;
             event.currentTarget.alpha = 0.5;
         };
         return Button;
-    })(createjs.Bitmap);
+    })(objects.GameObject);
     objects.Button = Button;
 })(objects || (objects = {}));
 //# sourceMappingURL=button.js.map
